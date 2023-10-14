@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -6,7 +8,16 @@ import 'package:riverpod_test/main.dart' as app;
 void main() async {
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('FavoriteButton - works properly', (tester) async {
+  testWidgets('FavoriteButton', (tester) async {
+    String prefix = '';
+    if (Platform.isAndroid) {
+      prefix = 'AndroidScreenshots';
+    } else if (Platform.isIOS) {
+      prefix = 'iOSScreenshots';
+    } else {
+      prefix = 'OtherScreenshots';
+    }
+    String dir = '$prefix${tester.testDescription.replaceAll(' ', '_')}';
     // (Optional): It helps to take screenshots
     await binding.convertFlutterSurfaceToImage();
 
@@ -16,7 +27,7 @@ void main() async {
     // awaits to settle the widgets
     await tester.pumpAndSettle();
     // (Optional): takes a screenshot
-    await binding.takeScreenshot('screenshot');
+    await binding.takeScreenshot('$dir/screenshot');
 
     // if finds a [ListView]
     expect(find.byType(ListView), findsOneWidget);
@@ -31,7 +42,7 @@ void main() async {
     await tester.tap(button);
     await tester.pumpAndSettle();
     // (Optional): takes a screenshot
-    await binding.takeScreenshot('screenshot2');
+    await binding.takeScreenshot('$dir/screenshot2');
 
     // then expect the color is turned to red
     expect(tester.widget<Icon>(find.byType(Icon).first).color, Colors.red);
@@ -40,7 +51,7 @@ void main() async {
     await tester.tap(button);
     await tester.pumpAndSettle();
     // (Optional): takes a screenshot
-    await binding.takeScreenshot('screenshot3');
+    await binding.takeScreenshot('$dir/screenshot3');
 
     // and expect again it turns back to grey
     expect(tester.widget<Icon>(find.byType(Icon).first).color, Colors.grey);
